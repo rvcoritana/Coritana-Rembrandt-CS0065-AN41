@@ -1,6 +1,6 @@
 # Early Warning Tool
 
-A KNIME Analytics Platform workflow that predicts whether a student is **"At Risk"** or **"Not At Risk"** of falling behind, based on attendance and academic performance data.
+This is an KNIME Analytics Platform workflow that predicts whether a student is **"At Risk"** or **"Not At Risk"** of falling behind, based on attendance and academic performance data.
 
 ## Overview
 
