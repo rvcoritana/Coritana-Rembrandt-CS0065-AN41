@@ -38,14 +38,6 @@ Full node-by-node outputs and screenshots are documented in `EarlyWarningTool_Ev
 | `student_performance_knime.csv` | Sample dataset used to train/test the models |
 | `EarlyWarningTool_Evidence_.pdf` | Screenshots of the executed workflow and results |
 
-## How to Run
-
-1. Install [KNIME Analytics Platform](https://www.knime.com/downloads).
-2. In KNIME, go to **File → Import KNIME Workflow...** and select `DemoEarlyWarningTool.knwf`.
-3. Open the **CSV Reader** node and point it to `student_performance_knime.csv` on your machine.
-4. Right-click the workflow and select **Execute All**.
-5. Click on any **Scorer** node and open its **Confusion Matrix** / **Accuracy Statistics** view to inspect results.
-
 ## Notes
 
 - This is a small demo dataset (30 rows), intended to illustrate the workflow and modeling approach rather than to produce a production-grade model.
