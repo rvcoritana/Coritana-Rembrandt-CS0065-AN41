@@ -19,6 +19,30 @@ This tool uses classic supervised machine learning to flag students who may need
 | `exam_score` | Exam score |
 | `risk_status` | Target label — `At Risk` or `Not At Risk` |
 
+## Workflow Structure
+
+**File:** `DemoEarlyWarningTool.knwf`
+
+```
+CSV Reader → Column Filter → Normalizer → Table Partitioner
+                                                 │
+                        ┌────────────────────────┼────────────────────────┐
+                        ▼                        ▼                        ▼
+              Decision Tree Learner   Logistic Regression Learner   Random Forest Learner
+                        │                        │                        │
+                        ▼                        ▼                        ▼
+             Decision Tree Predictor  Logistic Regression Predictor  Random Forest Predictor
+                        │                        │                        │
+                        ▼                        ▼                        ▼
+                     Scorer                   Scorer                   Scorer
+```
+
+1. **CSV Reader** – loads the raw student data.
+2. **Column Filter** – removes non-predictive columns (e.g. `student_id`) before modeling.
+3. **Normalizer** – scales numeric features to a common range.
+4. **Table Partitioner** – splits the data into training and test sets.
+5. **Three parallel model branches** – Decision Tree, Logistic Regression, and Random Forest are each trained on the same partitioned data so their performance can be compared.
+6. **Scorer nodes** – compare each model's predictions against the true `risk_status` labels and output a confusion matrix and accuracy statistics.
 ## Results
 
 On the held-out test partition, the models correctly separated the two classes, as shown in the confusion matrix output from the Scorer nodes:
