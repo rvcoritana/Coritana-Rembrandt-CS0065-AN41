@@ -1,68 +1,46 @@
-# Early Warning Tool
+# Rule-Based Vacuum Agent
 
-This is an KNIME Analytics Platform workflow that predicts whether a student is **"At Risk"** or **"Not At Risk"** of falling behind, based on attendance and academic performance data.
+**CS0065 – Intelligent Systems | Technical Assessment 2**
+Rembrandt V. Coritana · Section AN41
 
-## Overview
+A simple rule-based agent in Python that cleans two rooms (Room A and Room B). The agent perceives the state of its current room and acts according to fixed rules.
 
-This tool uses classic supervised machine learning to flag students who may need academic intervention early in the term. It reads student performance data, normalizes the features, trains three different classification models in parallel, and scores each model's predictions against a held-out test set so the results can be compared side by side.
+## How It Works
 
-## Dataset
+The program follows two rules at every step:
 
-**File:** `student_performance_knime.csv`
+1. **If the current room is dirty → clean it.**
+2. **If the current room is clean → move to the other room.**
 
-| Column | Description |
-|---|---|
-| `student_id` | Unique student identifier |
-| `attendance` | Attendance percentage |
-| `quiz_score` | Average quiz score |
-| `assignment_score` | Average assignment score |
-| `exam_score` | Exam score |
-| `risk_status` | Target label — `At Risk` or `Not At Risk` |
+These rules are implemented in the `perceive_and_act()` method of the `VacuumAgent` class.
 
-## Workflow Structure
+## How to Run
 
-**File:** `DemoEarlyWarningTool.knwf`
-
-```
-CSV Reader → Column Filter → Normalizer → Table Partitioner
-                                                 │
-                        ┌────────────────────────┼────────────────────────┐
-                        ▼                        ▼                        ▼
-              Decision Tree Learner   Logistic Regression Learner   Random Forest Learner
-                        │                        │                        │
-                        ▼                        ▼                        ▼
-             Decision Tree Predictor  Logistic Regression Predictor  Random Forest Predictor
-                        │                        │                        │
-                        ▼                        ▼                        ▼
-                     Scorer                   Scorer                   Scorer
+```bash
+python TA2_Coritana.py
 ```
 
-1. **CSV Reader** – loads the raw student data.
-2. **Column Filter** – removes non-predictive columns (e.g. `student_id`) before modeling.
-3. **Normalizer** – scales numeric features to a common range.
-4. **Table Partitioner** – splits the data into training and test sets.
-5. **Three parallel model branches** – Decision Tree, Logistic Regression, and Random Forest are each trained on the same partitioned data so their performance can be compared.
-6. **Scorer nodes** – compare each model's predictions against the true `risk_status` labels and output a confusion matrix and accuracy statistics.
-## Results
+You will be asked to enter:
 
-On the held-out test partition, the models correctly separated the two classes, as shown in the confusion matrix output from the Scorer nodes:
+1. The initial state of Room A (`dirty` or `clean`)
+2. The initial state of Room B (`dirty` or `clean`)
+3. The number of simulation steps (a whole number greater than 0)
 
-| | Predicted: Not At Risk | Predicted: At Risk |
-|---|---|---|
-| **Actual: Not At Risk** | 3 | 0 |
-| **Actual: At Risk** | 0 | 3 |
+Invalid inputs are rejected and the prompt is repeated.
 
-Full node-by-node outputs and screenshots are documented in `EarlyWarningTool_Evidence_.pdf`.
+## Program Structure
 
-## Files in this Repo
+| Part | Description |
+|------|-------------|
+| `ask_steps()` | Asks for the number of steps and validates the input |
+| `get_room_state(room_name)` | Asks for a room's initial state and validates the input |
+| `VacuumAgent` | The agent class, which starts in Room A |
+| `current_room()` | Returns the room the agent is currently in |
+| `is_dirty()` | Checks if the current room is dirty |
+| `clean_room()` | Sets the current room to clean |
+| `move()` | Switches the agent between Room A and Room B |
+| `perceive_and_act()` | Applies the two rules above |
 
-| File | Description |
-|---|---|
-| `DemoEarlyWarningTool.knwf` | The exported KNIME workflow (importable into KNIME Analytics Platform) |
-| `student_performance_knime.csv` | Sample dataset used to train/test the models |
-| `EarlyWarningTool_Evidence_.pdf` | Screenshots of the executed workflow and results |
+Rooms are stored as dictionaries, e.g. `{"name": "Room A", "state": "dirty"}`.
 
-## Notes
 
-- This is a small demo dataset (30 rows), intended to illustrate the workflow and modeling approach rather than to produce a production-grade model.
-- Because the sample size is small, the perfect confusion matrix results should be interpreted as a proof of concept, not a guarantee of real-world accuracy.
